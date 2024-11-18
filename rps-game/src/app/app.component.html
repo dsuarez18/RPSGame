@@ -1,0 +1,64 @@
+<div style="text-align:center">
+
+  <div *ngIf="newGame" class="mainContainer">
+    <h1>Enter Player's Names'</h1>
+    <div>
+      <label for="player1Name">Player 1</label>
+      <input type="text" id="player1Name" [(ngModel)]="player1Name" />
+    </div>
+    <div>
+      <label for="player2Name">Player 2</label>
+      <input type="text" id="player2Name" [(ngModel)]="player2Name" />
+    </div>
+    <button (click)="startGame()">Start</button>
+  </div>
+
+  <div *ngIf="!newGame && !gameOver && !roundEnds && player1Rounds < 3 && player2Rounds < 3">
+    <div>
+      <h1>Round {{roundNumber}}</h1>
+      <h3>{{currentPlayer ? player1Name : player2Name}}</h3>
+      <select id="choiseSelect" (change)="onSelected()">
+        <option value="-1" selected>Choose your hand</option>
+        @for (choice of choices; track choice) {
+          <option value={{choice}}>{{ choice }}</option>
+        }
+      </select>
+      <button (click)="checkPlay()">Ok</button>
+    </div>
+    <div>
+      <h3>Score</h3>
+      <table>
+        <tr>
+          <th>Round</th>
+          <th>Winner</th>
+        </tr>
+        @for (round of rounds; track round) {
+        <tr>
+          <td>{{round.roundNumber}}</td>
+          <td>{{round.winner.name}}</td>
+        </tr>
+        }
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="roundEnds">
+    <h1>
+      @if (roundResult == "Win") {
+        {{player1Name}} wins the round!
+      } @else if (roundResult == "Lose") {
+        {{player2Name}} wins the round!
+      } @else {
+        That's a draw!
+      }
+    </h1>
+    <button (click)="nextRound()">Next Round</button>
+  </div>
+
+  <div *ngIf="gameOver">
+    <h1>We Have a WINNER!!</h1>
+    <h1>{{endMessage}}</h1>
+    <button (click)="goToMain()">Play Again</button>
+  </div>
+
+</div>
