@@ -1,0 +1,69 @@
+.mainContainer {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: cursive;
+}
+.mainContainer h1,
+.gameContainer h1,
+.roundResult h1 {
+  margin: 50px;
+  font-size: 40px;
+  font-family: cursive;
+}
+.mainContainer .nameContainer {
+    display: flex;
+    align-items: end;
+    margin: 10px;
+}
+.mainContainer button,
+.gameContainer button,
+.roundResult button {
+    width: 250px;
+    height: 35px;
+    margin: 20px;
+    font-size: 20px;
+}
+.nameContainer label {
+  font-family: cursive;
+  font-size: 25px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+.nameContainer input {
+    height: 25px;
+    font-size: 18px;
+}
+
+.gameContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  font-family: cursive;
+}
+.gameContainer h3 {
+    font-size: 25px;
+}
+
+.roundContainer {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+.roundContainer select {
+    width: 180px;
+    height: 30px;
+    font-size: 18px;
+    margin: 20px;
+}
+
+.roundListContainer {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+}
+.roundListContainer h3 {
+    margin: 60px;
+}

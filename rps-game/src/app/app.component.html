@@ -1,22 +1,22 @@
 <div style="text-align:center">
 
   <div *ngIf="newGame" class="mainContainer">
-    <h1>Enter Player's Names'</h1>
-    <div>
+    <h1>Enter Player's Names</h1>
+    <div class="nameContainer">
       <label for="player1Name">Player 1</label>
       <input type="text" id="player1Name" [(ngModel)]="player1Name" />
     </div>
-    <div>
+    <div class="nameContainer">
       <label for="player2Name">Player 2</label>
       <input type="text" id="player2Name" [(ngModel)]="player2Name" />
     </div>
     <button (click)="startGame()">Start</button>
   </div>
 
-  <div *ngIf="!newGame && !gameOver && !roundEnds && player1Rounds < 3 && player2Rounds < 3">
-    <div>
+  <div *ngIf="!newGame && !gameOver && !roundEnds && player1Rounds < 3 && player2Rounds < 3" class="gameContainer">
+    <div class="roundContainer">
       <h1>Round {{roundNumber}}</h1>
-      <h3>{{currentPlayer ? player1Name : player2Name}}</h3>
+      <h3>{{currentPlayer ? player1Name : player2Name}}'s turn</h3>
       <select id="choiseSelect" (change)="onSelected()">
         <option value="-1" selected>Choose your hand</option>
         @for (choice of choices; track choice) {
@@ -25,7 +25,7 @@
       </select>
       <button (click)="checkPlay()">Ok</button>
     </div>
-    <div>
+    <div *ngIf="roundNumber > 1" class="roundListContainer">
       <h3>Score</h3>
       <table>
         <tr>
@@ -42,7 +42,7 @@
     </div>
   </div>
 
-  <div *ngIf="roundEnds">
+  <div *ngIf="roundEnds" class="roundResult">
     <h1>
       @if (roundResult == "Win") {
         {{player1Name}} wins the round!
@@ -55,7 +55,7 @@
     <button (click)="nextRound()">Next Round</button>
   </div>
 
-  <div *ngIf="gameOver">
+  <div *ngIf="gameOver" class="roundResult">
     <h1>We Have a WINNER!!</h1>
     <h1>{{endMessage}}</h1>
     <button (click)="goToMain()">Play Again</button>
