@@ -44,9 +44,9 @@
 
   <div *ngIf="roundEnds" class="roundResult">
     <h1>
-      @if (roundResult == "Win") {
+      @if (roundResult === player1Name) {
         {{player1Name}} wins the round!
-      } @else if (roundResult == "Lose") {
+      } @else if (roundResult === player2Name) {
         {{player2Name}} wins the round!
       } @else {
         That's a draw!

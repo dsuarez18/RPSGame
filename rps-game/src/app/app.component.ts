@@ -18,8 +18,8 @@ export class AppComponent implements OnInit {
   winnerMatrix: string[][] = [];
   player1Name: string = "";
   player2Name: string = "";
-  player1Choice: number = 0;
-  player2Choice: number = 0;
+  player1Choice: string = "";
+  player2Choice: string = "";
   player1Wins: number = 0;
   player2Wins: number = 0;
   player1Rounds: number = 0;
@@ -59,9 +59,9 @@ export class AppComponent implements OnInit {
   onSelected() {
     let choice = (<HTMLSelectElement>document.getElementById("choiseSelect")).value;
     if (this.currentPlayer) {
-      this.player1Choice = parseInt(choice);
+      this.player1Choice = choice;
     } else {
-      this.player2Choice = parseInt(choice);
+      this.player2Choice = choice;
     }
   }
 
@@ -80,7 +80,7 @@ export class AppComponent implements OnInit {
     this.roundEnds = false;
   }
 
-  async play(name1: string, choice1: number, name2: string, choice2: number) {
+  async play(name1: string, choice1: string, name2: string, choice2: string) {
     try {
       const response = await axios.post('http://localhost:5109/api/game/play', {
         player1name: name1,
@@ -94,6 +94,8 @@ export class AppComponent implements OnInit {
       });
 
       this.roundResult = response.data.result;
+      console.log(typeof this.roundResult);
+      console.log(typeof this.player2Name);
       this.currentPlayer = !this.currentPlayer;
       if (response.data.message) {
         this.player1Wins = response.data.player1Wins;

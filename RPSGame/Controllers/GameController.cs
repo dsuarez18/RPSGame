@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
+using RPSGame.Domain;
 
 namespace RPSGame.Controllers
 {
@@ -7,69 +8,42 @@ namespace RPSGame.Controllers
     [ApiController]
     public class GameController : ControllerBase
     {
-        public enum Choice
-        {
-            Piedra,
-            Papel,
-            Tijera
-        }
 
         private static int player1Rounds = 0;
         private static int player2Rounds = 0;
         private static int player1Wins = 0;
         private static int player2Wins = 0;
         private static int roundsPlayed = 0;
-        private static string[,] winnerMatrix = new string[Enum.GetNames(typeof(Choice)).Length, Enum.GetNames(typeof(Choice)).Length];
         private static List<Round> rounds = [];
-
-        public GameController()
-        {
-            LoadWinnerMatrix();
-        }
-
-        private static void LoadWinnerMatrix()
-        {
-            for (int i = 0; i < Enum.GetNames(typeof(Choice)).Length; i++)
-            {
-                for (int j = 0; j < Enum.GetNames(typeof(Choice)).Length; j++)
-                {
-                    if (i == j)
-                        winnerMatrix[i,j] = "Draw";
-                    else if ((i == 0 && j == 2) || (i == 1 && j == 0) || (i == 2 && j == 1))
-                        winnerMatrix[i,j] = "Win";
-                    else
-                        winnerMatrix[i,j] = "Lose";
-                }
-            }
-        }
+        private static List<Choice> choices = [new Rock(), new Paper(), new Scissors()];
 
         [HttpGet("choices")]
         public IActionResult GetChoices()
         {
             return Ok(new
             {
-                Choices = Enum.GetValues(typeof(Choice))
+                Choices = choices.Select(choice => choice.GetName())
             });
         }
 
         [HttpPost("play")]
         public IActionResult Play([FromBody] JsonObject data)
         {
-            string result = GetGameResult((int)data["player1choice"], (int)data["player2choice"]);
+            Result result = GetGameResult((string)data["player1choice"], (string)data["player2choice"]);
             roundsPlayed++;
             Player winner = new();
-            if (result == "Win")
+            if (result.Equals(Result.Win))
             {
                 player1Rounds++;
-                winner = new(((string?)data["player1name"]), ((int)data["player1choice"]));
+                winner = new(((string?)data["player1name"]));
             }
-            else if (result == "Lose")
+            else if (result.Equals(Result.Lose))
             {
                 player2Rounds++;
-                winner = new(((string?)data["player2name"]), ((int)data["player2choice"]));
+                winner = new(((string?)data["player2name"]));
             } else
             {
-                winner = new("Draw",0);
+                winner = new("Draw");
             }
             Round round = new(roundsPlayed, winner);
             rounds.Add(round);
@@ -91,7 +65,7 @@ namespace RPSGame.Controllers
                 rounds.Clear();
                 return Ok(new
                 {
-                    Result = result,
+                    Result = winner.Name,
                     Message = winner.Name + " is the new EMPEROR!",
                     Player1Wins = player1Wins,
                     Player2Wins = player2Wins,
@@ -101,7 +75,7 @@ namespace RPSGame.Controllers
 
             return Ok(new
             {
-                Result = result,
+                Result = winner.Name,
                 Player1Rounds = player1Rounds,
                 Player2Rounds = player2Rounds,
                 RoundsPlayed = roundsPlayed,
@@ -109,27 +83,50 @@ namespace RPSGame.Controllers
             });
         }
 
-        private static string GetGameResult(int player1choice, int player2choice)
+        private Result GetGameResult(string player1choice, string player2choice)
         {
-            return winnerMatrix[player1choice,player2choice];
+            return ChoiceComparator(player1choice,player2choice);
+        }
+
+        private Choice ChoiceFactory(string choice)
+        {
+            return choice switch
+            {
+                "Rock" => new Rock(),
+                "Paper" => new Paper(),
+                "Scissors" => new Scissors(),
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private Result ChoiceComparator(string player1Choice, string player2Choice)
+        {
+            Choice player1 = ChoiceFactory(player1Choice);
+            return player2Choice switch
+            {
+                "Rock" => player1.compareToRock(),
+                "Paper" => player1.compareToPaper(),
+                "Scissors" => player1.compareToScissors(),
+                _ => throw new NotImplementedException(),
+            };
         }
 
     }
 
-    public class Player
-    {
-        public string Name { get; set; }
-        public int Choice { get; set; }
+    //public class Player
+    //{
+    //    public string Name { get; set; }
+    //    public string Choice { get; set; }
 
-        public Player() {
-            this.Name = "";
-            this.Choice = 0;
-        }
-        public Player(string name, int choice) { 
-            this.Name = name;
-            this.Choice = choice;
-        }
-    }
+    //    public Player() {
+    //        this.Name = "";
+    //        this.Choice = "";
+    //    }
+    //    public Player(string name, string choice) { 
+    //        this.Name = name;
+    //        this.Choice = choice;
+    //    }
+    //}
 
     public class Round
     {
